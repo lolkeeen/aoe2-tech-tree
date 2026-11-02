@@ -195,6 +195,191 @@ def compact_stats(use: str, node_id: int) -> dict | None:
     return stats or None
 
 
+# Armor classes that describe a kind of unit. Base melee, pierce, and the
+# all-units marker are not counters.
+MATCHUP_CLASSES = {
+    1: "infantry",
+    5: "elephants",
+    8: "cavalry",
+    15: "archers",
+    16: "ships",
+    17: "rams",
+    19: "uniqueUnits",
+    20: "siege",
+    23: "gunpowder",
+    25: "monks",
+    27: "spearmen",
+    28: "cavalryArchers",
+    29: "shockInfantry",
+    30: "camels",
+    35: "mamelukes",
+    37: "mountedSiege",
+    38: "skirmishers",
+    60: "warships",
+}
+MATCHUP_PRIORITY = {class_id: index for index, class_id in enumerate(
+    (8, 30, 5, 15, 28, 38, 27, 1, 29, 20, 17, 25, 16, 60, 23, 19, 35, 37)
+)}
+MIN_COUNTER_BONUS = 3
+
+
+def unit_node_id(cell_id) -> int | None:
+    parts = str(cell_id or "").split("_")
+    if len(parts) < 3 or parts[0] != "Unit":
+        return None
+    try:
+        return int(parts[1])
+    except ValueError:
+        return None
+
+
+def attach_matchups(columns: list[dict], groups: list[dict], stat_units: dict, trees: dict) -> None:
+    """Add the unit types a unit beats and the units that counter it."""
+    nodes = []
+    for column in columns:
+        for node in [*column["cells"], *column["extras"]]:
+            if node.get("useType") == "Unit":
+                nodes.append(node)
+    for group in groups:
+        for node in group["items"]:
+            if node.get("useType") == "Unit":
+                nodes.append(node)
+    if not nodes:
+        return
+
+    parent: dict[int, int] = {}
+
+    def find(node_id: int) -> int:
+        parent.setdefault(node_id, node_id)
+        if parent[node_id] != node_id:
+            parent[node_id] = find(parent[node_id])
+        return parent[node_id]
+
+    def union(left: int, right: int) -> None:
+        root_left, root_right = find(left), find(right)
+        if root_left != root_right:
+            parent[root_right] = root_left
+
+    for tree in trees.values():
+        for building in tree.get("buildings") or []:
+            grid = building.get("grid") or []
+            width = max((len(row or []) for row in grid), default=0)
+            for col in range(width):
+                ids = []
+                for row in grid:
+                    if not row or col >= len(row) or not row[col]:
+                        continue
+                    node_id = unit_node_id(row[col])
+                    if node_id is not None:
+                        ids.append(node_id)
+                for other in ids[1:]:
+                    union(ids[0], other)
+
+    by_name: dict[str, int] = {}
+    for node in nodes:
+        name = node["name"].casefold()
+        if name in by_name:
+            union(node["nodeId"], by_name[name])
+        else:
+            by_name[name] = node["nodeId"]
+    for name, node_id in by_name.items():
+        if name.startswith("elite ") and name[6:] in by_name:
+            union(node_id, by_name[name[6:]])
+
+    def combat_profile(node_id: int) -> tuple[dict[int, int], set[int]]:
+        raw = stat_units.get(str(node_id)) or {}
+        attacks: dict[int, int] = {}
+        armors: set[int] = set()
+        for attack in raw.get("Attacks") or []:
+            class_id = attack.get("Class")
+            amount = attack.get("Amount") or 0
+            if class_id in MATCHUP_CLASSES and amount >= MIN_COUNTER_BONUS:
+                attacks[class_id] = max(attacks.get(class_id, 0), int(amount))
+        for armor in raw.get("Armours") or []:
+            class_id = armor.get("Class")
+            if class_id in MATCHUP_CLASSES:
+                armors.add(class_id)
+        return attacks, armors
+
+    profiles = {node["nodeId"]: combat_profile(node["nodeId"]) for node in nodes}
+    lines: dict[int, list[dict]] = {}
+    for node in nodes:
+        lines.setdefault(find(node["nodeId"]), []).append(node)
+
+    for node in nodes:
+        attacks, armors = profiles[node["nodeId"]]
+        ordered = sorted(attacks, key=lambda class_id: (-attacks[class_id], MATCHUP_PRIORITY.get(class_id, 99)))
+        strong = []
+        for class_id in ordered:
+            label = MATCHUP_CLASSES[class_id]
+            if label not in strong:
+                strong.append(label)
+        if strong:
+            node["strong"] = strong[:6]
+        else:
+            node.pop("strong", None)
+
+        standard_by_class = {class_id: [] for class_id in armors}
+        unique_by_class = {class_id: [] for class_id in armors}
+        for members in lines.values():
+            if find(members[0]["nodeId"]) == find(node["nodeId"]):
+                continue
+            for class_id in armors:
+                best_member = None
+                best_amount = 0
+                for member in members:
+                    amount = profiles[member["nodeId"]][0].get(class_id, 0)
+                    if amount < MIN_COUNTER_BONUS:
+                        continue
+                    if best_member is None:
+                        best_member = member
+                        best_amount = amount
+                        continue
+                    member_unique = member.get("kind") == "unique"
+                    best_unique = best_member.get("kind") == "unique"
+                    if member_unique != best_unique:
+                        if not member_unique:
+                            best_member = member
+                            best_amount = amount
+                        continue
+                    if amount > best_amount or (
+                        amount == best_amount and member.get("age", 0) > best_member.get("age", 0)
+                    ):
+                        best_amount = amount
+                        best_member = member
+                if best_member is None:
+                    continue
+                entry = (best_amount, best_member["name"].casefold(), best_member["nodeId"])
+                bucket = unique_by_class if best_member.get("kind") == "unique" else standard_by_class
+                bucket[class_id].append(entry)
+
+        def diversify(buckets: dict[int, list[tuple]], per_class: int, limit: int) -> list[tuple]:
+            chosen = []
+            seen_names = set()
+            for rank in range(per_class):
+                ranked = []
+                for bucket in buckets.values():
+                    ordered = sorted(bucket, key=lambda item: (-item[0], item[1]))
+                    if rank < len(ordered):
+                        ranked.append(ordered[rank])
+                ranked.sort(key=lambda item: (-item[0], item[1]))
+                for entry in ranked:
+                    if entry[1] in seen_names:
+                        continue
+                    seen_names.add(entry[1])
+                    chosen.append(entry)
+                    if len(chosen) >= limit:
+                        return chosen
+            return chosen
+
+        picked = [node_id for _amount, _name, node_id in diversify(standard_by_class, 3, 6)]
+        picked.extend(node_id for _amount, _name, node_id in diversify(unique_by_class, 2, 3))
+        if picked:
+            node["weak"] = picked
+        else:
+            node.pop("weak", None)
+
+
 def normalize_grid(grid) -> list[list]:
     rows = []
     width = 0
@@ -461,6 +646,8 @@ def main() -> None:
 
     attach_to(12, ("Unit_2588_12", "Unit_2552_12", "Unit_2554_12", "Unit_1699_12", "Unit_882_12"))
     attach_to(87, ("Unit_1155_87", "Unit_1010_87", "Unit_1012_87"))
+    # Replaces Hussar. Only Lithuanians and Poles train it, from the Stable.
+    attach_to(101, ("Unit_1707_101",))
 
     # Every unique unit trained at the Castle belongs on that row. The same
     # unit can exist twice in the source data (the Castle line and a team
@@ -526,6 +713,7 @@ def main() -> None:
         return (True, name_by_key.get(key, key).casefold())
 
     unique_groups = [{"key": key, "items": groups[key]} for key in sorted(groups, key=group_sort)]
+    attach_matchups(public_columns, unique_groups, STATS.get("Unit") or {}, trees)
     string_set, help_ids = string_ids(public_columns, unique_groups, civs)
     strings_out = localized_strings(locale_tables, string_set, help_ids)
 

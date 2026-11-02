@@ -15,7 +15,6 @@ const UI = {
     building: "Building",
     unique: "Unique",
     regional: "Regional",
-    regionalGroup: "Regional",
     selected: "Selected",
     owned: "This civilization has it",
     dimmed: "None of the remaining civilizations",
@@ -26,8 +25,6 @@ const UI = {
     civs: "Civilizations",
     count: (shown, total) => `${shown} of ${total}`,
     empty: "No civilization has every selected item.",
-    uniques: "Unique and regional",
-    uniquesNote: "Items that do not fit the shared building grid. A unique technology or unit leaves only the civilization that has it.",
     loading: "Loading the tech tree…",
     error: "The tech tree data did not load. From the web folder, run: py -3 -m http.server",
     cost: "Cost",
@@ -46,6 +43,26 @@ const UI = {
     vsCavalry: "vs cavalry",
     vsCamels: "vs camels",
     vsRams: "vs rams",
+    strongVs: "Strong vs",
+    weakVs: "Weak vs",
+    infantry: "Infantry",
+    elephants: "Elephants",
+    cavalry: "Cavalry",
+    archers: "Archers",
+    ships: "Ships",
+    rams: "Rams",
+    uniqueUnits: "Unique units",
+    siege: "Siege",
+    gunpowder: "Gunpowder units",
+    monks: "Monks",
+    spearmen: "Spearmen",
+    cavalryArchers: "Cavalry archers",
+    shockInfantry: "Shock infantry",
+    camels: "Camels",
+    mamelukes: "Mamelukes",
+    mountedSiege: "Mounted siege",
+    skirmishers: "Skirmishers",
+    warships: "Warships",
     bonusDamage: "Bonus damage",
     passThrough: "pass through",
     fromCavalry: "from cavalry",
@@ -74,7 +91,6 @@ const UI = {
     building: "Здание",
     unique: "Уникальное",
     regional: "Региональное",
-    regionalGroup: "Региональные",
     selected: "Выбрано",
     owned: "Есть у этой цивилизации",
     dimmed: "Нет ни у одной из оставшихся цивилизаций",
@@ -85,8 +101,6 @@ const UI = {
     civs: "Цивилизации",
     count: (shown, total) => `${shown} из ${total}`,
     empty: "Ни одна цивилизация не имеет всех выбранных пунктов.",
-    uniques: "Уникальные и региональные",
-    uniquesNote: "То, что не поместилось в общую сетку зданий. Уникальная технология или юнит оставляет только ту цивилизацию, у которой они есть.",
     loading: "Загрузка дерева технологий…",
     error: "Не удалось загрузить дерево технологий. В папке web выполните: py -3 -m http.server",
     cost: "Цена",
@@ -105,6 +119,26 @@ const UI = {
     vsCavalry: "против кавалерии",
     vsCamels: "против верблюдов",
     vsRams: "против таранов",
+    strongVs: "Силён против",
+    weakVs: "Слаб против",
+    infantry: "Пехота",
+    elephants: "Слоны",
+    cavalry: "Кавалерия",
+    archers: "Стрелки",
+    ships: "Корабли",
+    rams: "Тараны",
+    uniqueUnits: "Уникальные юниты",
+    siege: "Осадные орудия",
+    gunpowder: "Пороховые юниты",
+    monks: "Монахи",
+    spearmen: "Копейщики",
+    cavalryArchers: "Конные лучники",
+    shockInfantry: "Штурмовая пехота",
+    camels: "Верблюды",
+    mamelukes: "Мамелюки",
+    mountedSiege: "Осадные всадники",
+    skirmishers: "Застрельщики",
+    warships: "Военные корабли",
     bonusDamage: "Бонусный урон",
     passThrough: "сквозной урон",
     fromCavalry: "от кавалерии",
@@ -133,7 +167,6 @@ const UI = {
     building: "Budynek",
     unique: "Unikalne",
     regional: "Regionalne",
-    regionalGroup: "Regionalne",
     selected: "Wybrane",
     owned: "Ma to ta cywilizacja",
     dimmed: "Brak u pozostałych cywilizacji",
@@ -144,8 +177,6 @@ const UI = {
     civs: "Cywilizacje",
     count: (shown, total) => `${shown} z ${total}`,
     empty: "Żadna cywilizacja nie ma wszystkich wybranych elementów.",
-    uniques: "Unikalne i regionalne",
-    uniquesNote: "Elementy, które nie mieszczą się we wspólnej siatce budynków. Unikalna technologia albo jednostka zostawia tylko cywilizację, która ją posiada.",
     loading: "Wczytywanie drzewka technologii…",
     error: "Nie udało się wczytać drzewka technologii. W folderze web uruchom: py -3 -m http.server",
     cost: "Koszt",
@@ -164,6 +195,26 @@ const UI = {
     vsCavalry: "przeciw kawalerii",
     vsCamels: "przeciw wielbłądom",
     vsRams: "przeciw taranom",
+    strongVs: "Mocny przeciw",
+    weakVs: "Słaby przeciw",
+    infantry: "Piechota",
+    elephants: "Słonie",
+    cavalry: "Kawaleria",
+    archers: "Łucznicy",
+    ships: "Okręty",
+    rams: "Tarany",
+    uniqueUnits: "Unikalne jednostki",
+    siege: "Machiny oblężnicze",
+    gunpowder: "Jednostki prochowe",
+    monks: "Mnisi",
+    spearmen: "Włócznicy",
+    cavalryArchers: "Kawaleria z łukiem",
+    shockInfantry: "Piechota szturmowa",
+    camels: "Wielbłądy",
+    mamelukes: "Mamelucy",
+    mountedSiege: "Oblężenie konne",
+    skirmishers: "Oszczepnicy",
+    warships: "Okręty wojenne",
     bonusDamage: "Obrażenia dodatkowe",
     passThrough: "przebijanie",
     fromCavalry: "od kawalerii",
@@ -183,6 +234,7 @@ const UI = {
 const state = { selected: [], focusedCiv: null, alliedCivs: [], query: "", lastMatch: "", lang: "en" };
 let data = null;
 const byKey = new Map();
+const unitById = new Map();
 
 function text(key) {
   const pack = UI[state.lang] || UI.en;
@@ -309,14 +361,28 @@ function nodeButton(node) {
   return button;
 }
 
+const HUSSAR_ID = 441;
+const WINGED_HUSSAR_ID = 1707;
+
 function castleUniqueUnit(column, item) {
   return column.building.nodeId === 82 && item.useType === "Unit" && item.nodeType === "UniqueUnit";
 }
 
+function wingedHussarReplacement(column) {
+  if (column.building.nodeId !== 101) return null;
+  const focused = focusedCivilization();
+  if (!focused) return null;
+  const winged = column.extras.find((item) => item.nodeId === WINGED_HUSSAR_ID);
+  if (!winged || !civHas(focused, winged) || civHas(focused, { useType: "Unit", nodeId: HUSSAR_ID })) return null;
+  return winged;
+}
+
 function visibleExtras(column, age) {
   const focused = focusedCivilization();
+  const replaced = Boolean(wingedHussarReplacement(column));
   return column.extras.filter((item) => {
     if (item.age !== age.id) return false;
+    if (replaced && item.nodeId === WINGED_HUSSAR_ID) return false;
     if (!castleUniqueUnit(column, item)) return true;
     return Boolean(focused && civHas(focused, item));
   });
@@ -325,7 +391,11 @@ function visibleExtras(column, age) {
 function renderAgeCell(column, age) {
   const cell = document.createElement("div");
   cell.className = `age-cell age-${age.id}`;
-  const items = column.cells.filter((item) => item.age === age.id);
+  const replacement = wingedHussarReplacement(column);
+  const items = column.cells.filter((item) => item.age === age.id).map((item) => {
+    if (!replacement || item.nodeId !== HUSSAR_ID) return item;
+    return { ...replacement, row: item.row, col: item.col, age: item.age };
+  });
   const extras = visibleExtras(column, age);
   if (items.length || extras.length) {
     const grid = document.createElement("div");
@@ -484,68 +554,6 @@ function appendCivHelp(body, civ, teamBonusOnly) {
   }
 }
 
-function groupTitle(group) {
-  if (group.key === "Regional") return text("regionalGroup");
-  const civ = data.civs.find((item) => item.key === group.key);
-  return civ ? displayName(civ) : group.key;
-}
-
-function renderUniques() {
-  const section = document.getElementById("uniques");
-  section.replaceChildren();
-  const heading = document.createElement("h2");
-  heading.textContent = text("uniques");
-  const note = document.createElement("p");
-  note.className = "section-note";
-  note.textContent = text("uniquesNote");
-  section.appendChild(heading);
-  section.appendChild(note);
-  const groups = document.createElement("div");
-  groups.className = "unique-groups";
-  const ordered = [...data.uniqueGroups].sort((a, b) => {
-    if ((a.key === "Regional") !== (b.key === "Regional")) return a.key === "Regional" ? -1 : 1;
-    return compareNames(groupTitle(a), groupTitle(b));
-  });
-  const ageById = new Map(data.ages.map((age) => [age.id, age]));
-  const placedNames = new Set();
-  for (const column of data.columns) {
-    if (HIDDEN_BUILDINGS.has(column.building.nodeId)) continue;
-    for (const node of [column.building, ...column.cells, ...column.extras]) placedNames.add(node.name);
-  }
-  for (const group of ordered) {
-    const card = document.createElement("article");
-    card.className = "unique-group";
-    const title = document.createElement("h3");
-    title.textContent = groupTitle(group);
-    card.appendChild(title);
-    const cards = document.createElement("div");
-    cards.className = "cards";
-    const seenIcons = new Set();
-    const items = [...group.items]
-      .sort((a, b) => a.age - b.age || compareNames(displayName(a), displayName(b)))
-      .filter((item) => {
-        if (placedNames.has(item.name)) return false;
-        const icon = `${item.useType}:${item.pictureIndex}`;
-        if (item.pictureIndex != null && seenIcons.has(icon)) return false;
-        seenIcons.add(icon);
-        return true;
-      });
-    if (!items.length) continue;
-    for (const item of items) {
-      const button = nodeButton(item);
-      const tag = document.createElement("span");
-      tag.className = "age-tag";
-      tag.textContent = ageById.has(item.age) ? displayName(ageById.get(item.age)) : "";
-      button.appendChild(tag);
-      cards.appendChild(button);
-    }
-    card.appendChild(cards);
-    groups.appendChild(card);
-  }
-  section.appendChild(groups);
-  section.hidden = false;
-}
-
 function renderCivs(remaining) {
   const list = document.getElementById("civ-list");
   const count = document.getElementById("civ-count");
@@ -601,7 +609,6 @@ function renderFocusedTree() {
   const top = scroller ? scroller.scrollTop : 0;
   const left = scroller ? scroller.scrollLeft : 0;
   renderTree();
-  renderUniques();
   applySelection();
   applySearch();
   if (scroller) {
@@ -763,7 +770,6 @@ function setLang(lang) {
   const search = document.getElementById("search");
   if (search) search.value = "";
   renderTree();
-  renderUniques();
   applySelection();
   applySearch();
 }
@@ -826,6 +832,33 @@ function appendBonusLines(tip, node) {
   }
 }
 
+function matchupRow(label, value, className) {
+  const row = document.createElement("div");
+  row.className = "tip-match";
+  const name = document.createElement("span");
+  name.className = "tip-label";
+  name.textContent = label;
+  const detail = document.createElement("span");
+  detail.className = className;
+  detail.textContent = value;
+  row.append(name, detail);
+  return row;
+}
+
+function appendMatchups(tip, node) {
+  if (!node || node.useType !== "Unit") return;
+  if (node.strong && node.strong.length) {
+    tip.appendChild(matchupRow(text("strongVs"), node.strong.map((key) => text(key)).join(", "), "tip-strong"));
+  }
+  if (node.weak && node.weak.length) {
+    const names = node.weak
+      .map((id) => unitById.get(id))
+      .filter(Boolean)
+      .map((unit) => displayName(unit));
+    if (names.length) tip.appendChild(matchupRow(text("weakVs"), names.join(", "), "tip-weak"));
+  }
+}
+
 function appendStats(tip, node) {
   const stats = node.stats;
   if (!stats) return;
@@ -877,6 +910,7 @@ function appendStats(tip, node) {
     row.append(name, value);
     tip.appendChild(row);
   }
+  appendMatchups(tip, node);
 }
 
 function placeTooltip(button) {
@@ -900,8 +934,7 @@ function showTooltip(button) {
   tip.replaceChildren();
   const title = document.createElement("div");
   title.className = "tip-name";
-  const age = button.querySelector(".age-tag");
-  title.textContent = age && age.textContent ? `${button.dataset.name} · ${age.textContent}` : (button.dataset.name || "");
+  title.textContent = button.dataset.name || "";
   tip.appendChild(title);
   const node = byKey.get(button.dataset.key);
   if (node) {
@@ -962,10 +995,19 @@ async function main() {
     civ.techs = new Set(civ.techs);
     civ.buildings = new Set(civ.buildings);
   }
+  unitById.clear();
+  const indexUnit = (node) => {
+    if (node.useType === "Unit") unitById.set(node.nodeId, node);
+  };
+  for (const column of data.columns) {
+    for (const node of [...column.cells, ...column.extras]) indexUnit(node);
+  }
+  for (const group of data.uniqueGroups) {
+    for (const node of group.items) indexUnit(node);
+  }
   document.getElementById("status").hidden = true;
   bindTooltip();
   renderTree();
-  renderUniques();
   document.getElementById("civ-list").addEventListener("click", (event) => {
     const add = event.target.closest(".civ-add");
     if (add) {

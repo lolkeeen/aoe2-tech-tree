@@ -17,6 +17,7 @@
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
   background: var(--bg);
   color: var(--ink);
 }
@@ -192,7 +193,9 @@ button, input { font: inherit; color: inherit; }
 
 .tree-scroll {
   overflow: auto;
-  padding: 12px 12px 28px;
+  overscroll-behavior: contain;
+  contain: paint;
+  padding: 12px;
   min-height: 0;
 }
 
@@ -219,6 +222,7 @@ button, input { font: inherit; color: inherit; }
   margin: 0;
   padding: 6px 0;
   overflow: auto;
+  overscroll-behavior: contain;
   flex: 1;
 }
 
@@ -467,6 +471,7 @@ button, input { font: inherit; color: inherit; }
   position: sticky;
   top: 0;
   overflow: auto;
+  overscroll-behavior: contain;
   padding: 12px 14px 18px;
 }
 
@@ -540,6 +545,10 @@ button, input { font: inherit; color: inherit; }
 .tip-bonus { color: #79d36a; font-weight: 750; }
 .tip-unique { color: #c58cff; font-weight: 750; }
 .tip-ally { color: var(--gold); font-weight: 750; }
+.tip-match { margin-top: 4px; }
+.tip-match .tip-label { display: block; }
+.tip-strong { color: #79d36a; }
+.tip-weak { color: #e15b5b; }
 .civ-sheet-ally,
 .civ-sheet-ally h2,
 .civ-sheet-ally h3,
@@ -603,50 +612,6 @@ button, input { font: inherit; color: inherit; }
 .extras-grid {
   display: grid;
   grid-template-columns: repeat(8, 50px);
-}
-
-.uniques {
-  margin-top: 22px;
-}
-
-.uniques h2 {
-  margin: 0 0 6px;
-  font-size: 18px;
-}
-
-.uniques .section-note {
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.unique-groups {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 10px;
-}
-
-.unique-group {
-  background: #1b1713;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 8px;
-}
-
-.unique-group h3 {
-  margin: 0 0 8px;
-  font-size: 14px;
-  color: #f0d59a;
-}
-
-.unique-group .cards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.age-tag {
-  display: none;
 }
 
 @media (max-width: 900px) {

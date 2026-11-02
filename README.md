@@ -28,7 +28,7 @@ The language menu is in the header. The choice is remembered in this browser. Sw
 
 The sheet to the right of the Imperial Age column shows the picked civilization’s official help text: the type line, bonus bullets, unique unit, unique technologies, and team bonus. Each added civilization appears there in gold with only its name and team bonus. Unique-technology effects in the picked civilization’s sheet are purple.
 
-Hover an icon for its name. A technology also shows what it does. Units and buildings show cost, hit points, attack, armor, range, speed, reload, train or research time, sight, and garrison when the game data has that number.
+Hover an icon for its name. A technology also shows what it does. Units and buildings show cost, hit points, attack, armor, range, speed, reload, train or research time, sight, and garrison when the game data has that number. A unit also lists what it is strong against and the units that counter it. Strong means the unit has attack bonus against that kind of unit. Weak lists the units whose bonus damage hits it.
 
 Outpost, Palisade Wall, and Palisade Gate are not on the tree.
 
