@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AoE2 DE tech tree filter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="title-block">
+      <h1 data-i18n="title">AoE2 DE tech tree</h1>
+      <p data-i18n="intro">Select units, technologies, or buildings. Civilizations that lack any of them turn red and move to the bottom.</p>
+    </div>
+    <div class="tools">
+      <label class="lang">
+        <span class="visually-hidden" data-i18n="language">Language</span>
+        <select id="lang">
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+          <option value="pl">Polski</option>
+        </select>
+      </label>
+      <label class="search">
+        <span class="visually-hidden" data-i18n="search">Find a technology, unit, or building</span>
+        <input id="search" type="search" data-i18n-placeholder="search" placeholder="Find a technology, unit, or building" autocomplete="off">
+      </label>
+      <span id="search-count" class="search-count"></span>
+      <button id="clear" type="button" data-i18n="clear" disabled>Clear</button>
+    </div>
+    <div id="chips" class="chips" aria-live="polite"></div>
+    <ul class="legend">
+      <li><i class="swatch unit"></i><span data-i18n="unit">Unit</span></li>
+      <li><i class="swatch tech"></i><span data-i18n="tech">Technology</span></li>
+      <li><i class="swatch building"></i><span data-i18n="building">Building</span></li>
+      <li><i class="swatch unique"></i><span data-i18n="unique">Unique</span></li>
+      <li><i class="swatch regional"></i><span data-i18n="regional">Regional</span></li>
+      <li><i class="swatch selected"></i><span data-i18n="selected">Selected</span></li>
+      <li><i class="swatch owned"></i><span data-i18n="owned">This civilization has it</span></li>
+      <li><i class="swatch dimmed"></i><span data-i18n="dimmed">None of the remaining civilizations</span></li>
+      <li><i class="swatch allied"></i><span data-i18n="allied">Added civilization</span></li>
+    </ul>
+  </header>
+  <div class="layout">
+    <main id="tree-scroll" class="tree-scroll">
+      <p id="status" class="status" data-i18n="loading">Loading the tech tree…</p>
+      <div id="tree" class="tree" hidden></div>
+      <section id="uniques" class="uniques" hidden></section>
+    </main>
+    <aside class="civ-panel">
+      <div class="civ-head">
+        <h2 data-i18n="civs">Civilizations</h2>
+        <p id="civ-count">—</p>
+        <p id="civ-focus" class="civ-focus" hidden></p>
+      </div>
+      <ul id="civ-list"></ul>
+      <p class="credit" data-i18n="credit">Tech data from the Siege Engineers AoE2 tech tree (MIT). Game icons © Hidden Path Entertainment, Forgotten Empires, SkyBox Labs, and Ensemble Studios.</p>
+      <p class="credit">Age of Empires II © Microsoft Corporation. AoE2 DE tech tree filter was created under Microsoft's <a href="https://www.xbox.com/en-US/developers/rules">Game Content Usage Rules</a> using assets from Age of Empires II, and it is not endorsed by or affiliated with Microsoft.</p>
+    </aside>
+  </div>
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+  <script src="icons.js"></script>
+  <script src="bonuses.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
