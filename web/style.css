@@ -600,6 +600,11 @@ button, input { font: inherit; color: inherit; }
   margin-top: 4px;
 }
 
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 50px);
+}
+
 .uniques {
   margin-top: 22px;
 }

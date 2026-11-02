@@ -462,10 +462,32 @@ def main() -> None:
     attach_to(12, ("Unit_2588_12", "Unit_2552_12", "Unit_2554_12", "Unit_1699_12", "Unit_882_12"))
     attach_to(87, ("Unit_1155_87", "Unit_1010_87", "Unit_1012_87"))
 
+    # Every unique unit trained at the Castle belongs on that row. The same
+    # unit can exist twice in the source data (the Castle line and a team
+    # copy); one icon is enough when the name and picture match.
+    castle_column = next((item for item in public_columns if item["building"]["nodeId"] == 82), None)
+    seen_castle_units: set[tuple[str, int | None]] = set()
+
+    def absorb_castle_unit(meta: dict) -> bool:
+        if castle_column is None:
+            return False
+        if meta.get("useType") != "Unit" or meta.get("nodeType") != "UniqueUnit" or meta.get("buildingId") != 82:
+            return False
+        signature = (meta["name"].casefold(), meta.get("pictureIndex"))
+        if signature not in seen_castle_units:
+            seen_castle_units.add(signature)
+            castle_column["extras"].append(meta)
+        return True
+
+    if castle_column is not None:
+        castle_column["cells"] = [cell for cell in castle_column["cells"] if not absorb_castle_unit(cell)]
+
     unique_items = []
     for meta in overflow:
         kept = take(meta)
         if kept is None:
+            continue
+        if absorb_castle_unit(kept):
             continue
         if kept["nodeType"] in UNIQUE_TYPES or kept["kind"] in {"unique", "regional"}:
             unique_items.append({**kept, "group": group_key(owner_keys(kept, civs))})
@@ -475,6 +497,10 @@ def main() -> None:
             unique_items.append({**kept, "group": group_key(owner_keys(kept, civs))})
         else:
             host["extras"].append(kept)
+
+    if castle_column is not None:
+        castle_column["extras"].sort(key=lambda item: (item["age"], item["name"].casefold(), item["nodeId"]))
+        print(f"castle unique units: {sum(1 for item in castle_column['extras'] if item.get('nodeType') == 'UniqueUnit')}")
 
     named_with_content = {column["building"]["name"] for column in public_columns if column["cells"] or column["extras"]}
     public_columns = [

@@ -26,7 +26,7 @@ The language menu is in the header. The choice is remembered in this browser. Sw
 
 **Add civilizations.** After one civilization is picked, each other name has a **+**. Adding a civilization turns its name gold and stacks its bonuses on top of the picked one. Press **×** to remove it. Clearing the picked civilization clears the added ones too.
 
-The sheet to the right of the Imperial Age column shows the picked civilization’s official help text: the type line, bonus bullets, unique unit, unique technologies, and team bonus. Each added civilization is written there in gold. Unique-technology effects in the picked civilization’s sheet are purple.
+The sheet to the right of the Imperial Age column shows the picked civilization’s official help text: the type line, bonus bullets, unique unit, unique technologies, and team bonus. Each added civilization appears there in gold with only its name and team bonus. Unique-technology effects in the picked civilization’s sheet are purple.
 
 Hover an icon for its name. A technology also shows what it does. Units and buildings show cost, hit points, attack, armor, range, speed, reload, train or research time, sight, and garrison when the game data has that number.
 
@@ -86,6 +86,8 @@ The script reads `cache/`. That cache is the Siege Engineers tech-tree data and 
 | `cache/` | Source data and locale strings |
 
 Buildings are rows and the four ages are columns. Inside an age cell, each column is an upgrade line. A cell with more than five icons and more than five columns splits into two rows.
+
+Picking a civilization adds that civilization’s own Castle unique unit to the Castle row. The base unit is in the Castle Age and the elite upgrade is in the Imperial Age. Other civilizations’ unique units stay off that row.
 
 ## Credits and usage rules
 

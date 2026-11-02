@@ -309,11 +309,24 @@ function nodeButton(node) {
   return button;
 }
 
+function castleUniqueUnit(column, item) {
+  return column.building.nodeId === 82 && item.useType === "Unit" && item.nodeType === "UniqueUnit";
+}
+
+function visibleExtras(column, age) {
+  const focused = focusedCivilization();
+  return column.extras.filter((item) => {
+    if (item.age !== age.id) return false;
+    if (!castleUniqueUnit(column, item)) return true;
+    return Boolean(focused && civHas(focused, item));
+  });
+}
+
 function renderAgeCell(column, age) {
   const cell = document.createElement("div");
   cell.className = `age-cell age-${age.id}`;
   const items = column.cells.filter((item) => item.age === age.id);
-  const extras = column.extras.filter((item) => item.age === age.id);
+  const extras = visibleExtras(column, age);
   if (items.length || extras.length) {
     const grid = document.createElement("div");
     grid.className = "age-items";
@@ -344,7 +357,9 @@ function renderAgeCell(column, age) {
     if (extras.length) {
       const extraRow = document.createElement("div");
       extraRow.className = "extras";
-      for (const item of extras) extraRow.appendChild(nodeButton(item));
+      const ordered = [...extras].sort((a, b) => compareNames(displayName(a), displayName(b)));
+      if (ordered.length > 8) extraRow.classList.add("extras-grid");
+      for (const item of ordered) extraRow.appendChild(nodeButton(item));
       cell.appendChild(extraRow);
     }
   }
@@ -422,14 +437,21 @@ function renderCivSheet() {
     const allyTitle = document.createElement("h2");
     allyTitle.textContent = displayName(ally);
     block.appendChild(allyTitle);
-    appendCivHelp(block, ally);
+    appendCivHelp(block, ally, true);
     body.appendChild(block);
   }
   fitCivSheet();
 }
 
-function appendCivHelp(body, civ) {
-  for (const block of parseCivHelp(lookupString(civ.helpStringId))) {
+function isTeamBonusTitle(title) {
+  const value = String(title || "").toLocaleLowerCase();
+  return value.includes("team bonus") || value.includes("командн") || value.includes("drużyn");
+}
+
+function appendCivHelp(body, civ, teamBonusOnly) {
+  const blocks = parseCivHelp(lookupString(civ.helpStringId));
+  const shown = teamBonusOnly ? blocks.filter((block) => isTeamBonusTitle(block.title)) : blocks;
+  for (const block of shown) {
     const lines = block.lines.slice();
     if (block.title) {
       const heading = document.createElement("h3");
@@ -574,6 +596,20 @@ function focusedCivilization() {
   return data.civs.find((item) => item.key === state.focusedCiv) || null;
 }
 
+function renderFocusedTree() {
+  const scroller = document.getElementById("tree-scroll");
+  const top = scroller ? scroller.scrollTop : 0;
+  const left = scroller ? scroller.scrollLeft : 0;
+  renderTree();
+  renderUniques();
+  applySelection();
+  applySearch();
+  if (scroller) {
+    scroller.scrollTop = top;
+    scroller.scrollLeft = left;
+  }
+}
+
 function toggleCiv(key) {
   if (state.focusedCiv === key) {
     state.focusedCiv = null;
@@ -582,7 +618,7 @@ function toggleCiv(key) {
     state.focusedCiv = key;
     state.alliedCivs = state.alliedCivs.filter((item) => item !== key);
   }
-  applySelection();
+  renderFocusedTree();
 }
 
 function toggleAlly(key) {
