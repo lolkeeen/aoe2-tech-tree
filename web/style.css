@@ -310,6 +310,27 @@ button, input { font: inherit; color: inherit; }
 
 .credit a { color: #e2b657; }
 
+.legal {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 28px 18px 48px;
+}
+
+.legal h1 {
+  margin: 0 0 12px;
+  font-size: 22px;
+}
+
+.legal p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.legal a { color: var(--gold); }
+.legal code { color: var(--ink); }
+
 .status { color: var(--muted); }
 
 .tree {
