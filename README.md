@@ -16,6 +16,20 @@ Then open [http://127.0.0.1:8765/](http://127.0.0.1:8765/).
 
 On Windows, use `py -3`. The `python` command is often missing from PATH.
 
+The same `web` folder is published at [https://lolkeeen.github.io/aoe2-tech-tree/](https://lolkeeen.github.io/aoe2-tech-tree/). A push to `main` updates that page. GitHub only hands out the files. The browser still runs the app.
+
+## Discord
+
+That published page is also the Discord Activity. Opened in a normal browser, it stays a normal page. Opened by Discord at `https://<app id>.discordsays.com`, it finishes Discord's handshake and Discord shows the tree.
+
+In the [Discord developer portal](https://discord.com/developers/applications):
+
+1. Create an application and turn on Activities.
+2. Add a URL mapping from `/` to `https://lolkeeen.github.io/aoe2-tech-tree`.
+3. Turn on Developer Mode in Discord, then launch the activity from the App Launcher in a server where you can test.
+
+`web/discord-config.js` stays empty for that setup. Paste the application id there only when a URL override opens the page from an address that is not `discordsays.com`.
+
 ## How to use it
 
 The language menu is in the header. The choice is remembered in this browser. Switching language clears the search box. Civilization names and the unique groups sort in the active language. Game names come from the official locale strings. The rest of the page chrome is translated.
